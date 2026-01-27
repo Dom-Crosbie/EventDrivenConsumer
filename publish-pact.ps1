@@ -1,5 +1,84 @@
-# Publish Consumer Pact to PactFlow Broker
-# This script runs the consumer tests and publishes the generated contract to PactFlow
+<#
+.SYNOPSIS
+    Run consumer tests and publish the generated contract to PactFlow.
+
+.DESCRIPTION
+    This script performs three steps:
+    1. Runs consumer Pact tests to generate a contract file
+    2. Validates the contract file was created successfully
+    3. Publishes the contract to PactFlow broker with version and branch metadata
+    
+    The contract defines what messages this consumer expects from its provider.
+    Publishing allows the provider to verify they can meet these expectations.
+
+.PARAMETER BrokerBaseUrl
+    PactFlow broker URL (default: https://dom-crosbie.pactflow.io)
+
+.PARAMETER BrokerToken
+    PactFlow authentication token (default: uses stored token)
+
+.PARAMETER ConsumerVersion
+    Semantic version for this consumer release (default: 1.0.0)
+
+.PARAMETER Branch
+    Git branch name for versioning and can-i-deploy checks (default: main)
+
+.PARAMETER Tag
+    Optional tag to apply to this version (e.g., 'prod', 'staging', 'new-feature')
+
+.EXAMPLE
+    .\publish-pact.ps1
+    Publish with default settings (version 1.0.0, branch main)
+
+.EXAMPLE
+    .\publish-pact.ps1 -ConsumerVersion "1.2.3" -Branch "feature/new-api"
+    Publish a specific version from a feature branch
+
+.EXAMPLE
+    .\publish-pact.ps1 -ConsumerVersion "2.0.0" -Branch "main" -Tag "prod"
+    Publish and tag as production version
+
+.EXAMPLE
+    .\publish-pact.ps1 -ConsumerVersion "1.5.0" -Tag "new-feature"
+    Publish with a tag for demo purposes
+
+.ALTERNATIVE COMMAND LINE CALLS
+    Using pact-broker CLI directly:
+    
+    # First run tests to generate contract
+    cd tests
+    dotnet test
+    cd ..
+
+    # Then publish
+    pact-broker publish tests/pacts/EventDrivenConsumer-EventDrivenProvider.json \
+      --consumer-app-version=1.0.0 \
+      --branch=main \
+      --broker-base-url=https://dom-crosbie.pactflow.io \
+      --broker-token=YOUR_TOKEN
+
+    # With a tag
+    pact-broker publish tests/pacts/EventDrivenConsumer-EventDrivenProvider.json \
+      --consumer-app-version=1.0.0 \
+      --branch=main \
+      --tag=new-feature \
+      --broker-base-url=https://dom-crosbie.pactflow.io \
+      --broker-token=YOUR_TOKEN
+
+    Using Docker:
+    
+    docker run --rm -v "${PWD}/tests/pacts:/pacts" pactfoundation/pact-cli:latest \
+      publish /pacts/EventDrivenConsumer-EventDrivenProvider.json \
+      --consumer-app-version=1.0.0 \
+      --branch=main \
+      --broker-base-url=https://dom-crosbie.pactflow.io \
+      --broker-token=YOUR_TOKEN
+
+.NOTES
+    Exit Codes:
+    - 0: Success (tests passed and contract published)
+    - 1: Failure (tests failed, contract not found, or publish failed)
+#>
 
 param(
     [string]$BrokerBaseUrl = "https://dom-crosbie.pactflow.io",

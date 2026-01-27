@@ -1,57 +1,125 @@
-# Example Provider Dotnet
+# Event-Driven Consumer - .NET Kafka Consumer
 
-[![Build](https://github.com/pactflow/example-provider-dotnet/actions/workflows/build.yml/badge)](https://github.com/pactflow/example-provider-dotnet/actions/workflows/build.yml)
+![GitHub Repo](https://github.com/Dom-Crosbie/EventDrivenConsumer)
 
-![Can I Deploy](https://testdemo.pactflow.io/pacticipants/pactflow-example-provider-dotnet/branches/master/latest-version/can-i-deploy/to-environment/production/badge)
+## What is This?
 
-![Pact Status](https://testdemo.pactflow.io/pacts/provider/pactflow-example-provider-dotnet/consumer/pactflow-example-consumer-dotnet/latest/badge) (latest)
+A .NET 8 consumer application that processes product events using **Contract Testing with Pact**. This project demonstrates how to test message-driven architectures without needing actual messaging infrastructure.
 
-![Pact Status](https://testdemo.pactflow.io/pacts/provider/pactflow-example-provider-dotnet/consumer/pactflow-example-consumer-dotnet/latest/prod/badge) (prod)
+## Key Features
 
-This is an example of a .NET 8 provider that uses Pact, [PactFlow](https://pactflow.io) and GitHub Actions to ensure that it is compatible with the expectations its consumers have of it.
+- ✅ Message-based contract testing with Pact
+- ✅ Clean architecture (Ports & Adapters pattern)
+- ✅ No Kafka required for testing
+- ✅ PactFlow integration for contract sharing
+- ✅ CI/CD ready with can-i-deploy checks
 
-The project uses a Makefile to simulate a very simple build pipeline with two stages - test and deploy.
+## Quick Start
 
-The latest version of the Example Consumer/Example Provider pact is published [here](https://test.pactflow.io/pacts/provider/pactflow-example-provider-dotnet/consumer/pactflow-example-consumer/latest).
+### Prerequisites
 
-## Project Phases
+- .NET 8.0 SDK or higher
+- Docker (for pact-broker CLI)
+- PactFlow account: https://dom-crosbie.pactflow.io
 
-The project uses a Makefile to simulate a very simple build pipeline with two stages - test and deploy.
+### Run Tests
 
-* Test
-  * Run tests (including the pact tests that generate the contract)
-  * Publish pacts, tagging the consumer version with the name of the current branch
-  * Check if we are safe to deploy to prod (ie. has the pact content been successfully verified)
-* Deploy (only from master)
-  * Deploy app (just pretend for the purposes of this example!)
-  * Tag the deployed consumer version as 'prod'
-
-## Dependencies
-
-* Docker
-* A [PactFlow](https://pactflow.io) account
-* A [read/write API Token](https://docs.pactflow.io/#configuring-your-api-token) from your PactFlow account
-* .NET 8.x installed. Installation instructions can be found here: <https://learn.microsoft.com/en-us/dotnet/core/install/>
-
-## Usage
-
-See the [PactFlow CI/CD Workshop](https://github.com/pactflow/ci-cd-workshop).
-
-The below commands are designed for a Linux/OSX environment, please translate for use on Windows/PowerShell as necessary:
-
-Please ensure the following environment variables have been exported in the process that you run the tests (generally a terminal):
-
-```bash
-export PACT_BROKER_TOKEN=<your pactflow read/write token here>
-export PACT_BROKER_BASE_URL=https://<your pactflow subdomain>.pactflow.io
+```powershell
+# Run consumer tests and generate contract
+cd tests
+dotnet test
 ```
 
-### Simulating CI
+The contract file will be generated in `tests/pacts/`
 
-Usually, you would integrate this into a real CI system (such as Buildkite/Jenkins/CircleCI etc., or Travis as this repository is built against).
+### Publish Contract to PactFlow
 
-You can simulate a CI process with the following command:
+```powershell
+# Publish with default settings
+.\publish-pact.ps1
 
-```bash
-make fake_ci
+# Publish with custom version and branch
+.\publish-pact.ps1 -ConsumerVersion "1.2.0" -Branch "feature/new-api"
+
+# Publish with a tag
+.\publish-pact.ps1 -ConsumerVersion "1.2.0" -Branch "main" -Tag "prod"
 ```
+
+### Check if Safe to Deploy
+
+```powershell
+# Check if this version can be deployed to production
+.\can-i-deploy.ps1 -ConsumerVersion "1.2.0"
+
+# Check specific branch
+.\can-i-deploy.ps1 -Branch "new-feature"
+```
+
+## Project Structure
+
+```
+consumer-dotnet-kafka/
+├── src/                              # Application code
+│   ├── ProductEventProcessor.cs      # Core business logic (Port)
+│   ├── Controllers/                  # API endpoints
+│   └── Repositories/                 # Data layer
+├── tests/                            # Pact consumer tests
+│   ├── ConsumerEventTests.cs         # Contract test definitions
+│   └── pacts/                        # Generated contract files
+├── publish-pact.ps1                  # Publish contracts to PactFlow
+├── can-i-deploy.ps1                  # Verify deployment safety
+└── WORKSHOP-README.md                # Detailed learning guide
+```
+
+## PowerShell Scripts
+
+| Script | Purpose | Common Usage |
+|--------|---------|--------------|
+| `publish-pact.ps1` | Run tests and publish contract to PactFlow | `.\publish-pact.ps1 -ConsumerVersion "1.0.0" -Branch "main"` |
+| `can-i-deploy.ps1` | Check if version is safe to deploy | `.\can-i-deploy.ps1 -ConsumerVersion "1.0.0"` |
+| `demo-workflow.ps1` | Interactive demo of contract testing workflow | `.\demo-workflow.ps1` |
+| `quick-reference.ps1` | Display quick reference guide | `.\quick-reference.ps1` |
+
+### Script Details
+
+Each script includes comprehensive help documentation. View it with:
+```powershell
+Get-Help .\publish-pact.ps1 -Detailed
+Get-Help .\can-i-deploy.ps1 -Detailed
+```
+
+All scripts support alternative execution via:
+- **pact-broker CLI** (install from Ruby gems)
+- **Docker** (pactfoundation/pact-cli image)
+- **Direct commands** (see script headers for examples)
+
+## Workflow
+
+```
+1. Write Consumer Test → 2. Generate Contract → 3. Publish to PactFlow
+                                                        ↓
+                                                 Provider Verifies
+                                                        ↓
+                                           4. can-i-deploy Check
+                                                        ↓
+                                                   5. Deploy ✅
+```
+
+## Learning Resources
+
+- **New to Contract Testing?** Read [WORKSHOP-README.md](WORKSHOP-README.md) for a step-by-step guide
+- **Pact Documentation:** https://docs.pact.io/
+- **PactFlow:** https://pactflow.io/
+
+## Configuration
+
+Edit scripts to update broker settings:
+
+```powershell
+$BrokerBaseUrl = "https://dom-crosbie.pactflow.io"
+$BrokerToken = "YOUR_TOKEN_HERE"
+```
+
+## Support
+
+For issues or questions about this project, please refer to the workshop documentation or Pact community resources.
