@@ -31,6 +31,23 @@ Write-Host "   .\can-i-deploy.ps1 -Branch 'feature-x'`n" -ForegroundColor Gray
 Write-Host "4️⃣  Run Interactive Demo" -ForegroundColor Yellow
 Write-Host "   .\demo-workflow.ps1`n" -ForegroundColor Gray
 
+Write-Host "5️⃣  Start Kafka Infrastructure" -ForegroundColor Yellow
+Write-Host "   .\start-kafka.ps1`n" -ForegroundColor Gray
+
+Write-Host "6️⃣  Send Events to Kafka" -ForegroundColor Yellow
+Write-Host "   .\send-event.ps1 -Mode quick" -ForegroundColor Gray
+Write-Host "   .\send-event.ps1 (interactive mode)`n" -ForegroundColor Gray
+
+Write-Host "7️⃣  Start Consumer Application" -ForegroundColor Yellow
+Write-Host "   cd src" -ForegroundColor Gray
+Write-Host "   dotnet run`n" -ForegroundColor Gray
+
+Write-Host "8️⃣  View Events in Kafka" -ForegroundColor Yellow
+Write-Host "   .\view-events.ps1`n" -ForegroundColor Gray
+
+Write-Host "9️⃣  Stop Kafka" -ForegroundColor Yellow
+Write-Host "   .\stop-kafka.ps1`n" -ForegroundColor Gray
+
 Write-Host "`n🔧 ALTERNATIVE COMMANDS (Without Scripts)`n" -ForegroundColor White
 
 Write-Host "Publish Contract Using Docker:" -ForegroundColor Yellow
@@ -53,6 +70,27 @@ Write-Host @"
      --broker-base-url=https://dom-crosbie.pactflow.io \
      --broker-token=YOUR_TOKEN
 "@ -ForegroundColor Gray
+
+Write-Host "`nSend Kafka Event Manually:" -ForegroundColor Yellow
+Write-Host @"
+   docker exec -it demo-kafka kafka-console-producer \
+     --bootstrap-server localhost:9092 \
+     --topic products
+   
+   Then type: {"id":"test-1","type":"Demo","name":"Test","version":"v1","event":"CREATED"}
+"@ -ForegroundColor Gray
+
+Write-Host "`nView Kafka Events:" -ForegroundColor Yellow
+Write-Host @"
+   docker exec -it demo-kafka kafka-console-consumer \
+     --bootstrap-server localhost:9092 \
+     --topic products \
+     --from-beginning
+"@ -ForegroundCstart-kafka.ps1                   - Start Kafka infrastructure" -ForegroundColor Gray
+Write-Host "   send-event.ps1                    - Send events to Kafka" -ForegroundColor Gray
+Write-Host "   view-events.ps1                   - View Kafka events" -ForegroundColor Gray
+Write-Host "   stop-kafka.ps1                    - Stop Kafka infrastructure" -ForegroundColor Gray
+Write-Host "   olor Gray
 
 Write-Host "`n`n📂 PROJECT FILES`n" -ForegroundColor White
 
@@ -84,6 +122,15 @@ Write-Host "GitHub Repository:" -ForegroundColor Yellow
 Write-Host "   https://github.com/Dom-Crosbie/EventDrivenConsumer`n" -ForegroundColor Cyan
 
 Write-Host "Pact Documentation:" -ForegroundColor Yellow
+Write-Host "Full Demo Workflow:" -ForegroundColor Yellow
+Write-Host "   1. Start Kafka: .\start-kafka.ps1" -ForegroundColor Gray
+Write-Host "   2. Start consumer app: cd src; dotnet run" -ForegroundColor Gray
+Write-Host "   3. Send events: .\send-event.ps1 -Mode quick" -ForegroundColor Gray
+Write-Host "   4. Verify events processed in consumer logs" -ForegroundColor Gray
+Write-Host "   5. Run contract tests: cd tests; dotnet test" -ForegroundColor Gray
+Write-Host "   6. Publish contract: .\publish-pact.ps1 -Tag 'new-feature'" -ForegroundColor Gray
+Write-Host "   7. Check deployment: .\can-i-deploy.ps1`n" -ForegroundColor Gray
+
 Write-Host "   https://docs.pact.io/`n" -ForegroundColor Cyan
 
 Write-Host "`n💡 WORKFLOW EXAMPLE`n" -ForegroundColor White

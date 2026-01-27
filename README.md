@@ -55,6 +55,29 @@ The contract file will be generated in `tests/pacts/`
 .\can-i-deploy.ps1 -Branch "new-feature"
 ```
 
+### Run Application with Kafka
+
+```powershell
+# Start Kafka infrastructure
+.\start-kafka.ps1
+
+# Send test events
+.\send-event.ps1 -Mode quick
+
+# Or send events interactively
+.\send-event.ps1
+
+# Start the consumer application
+cd src
+dotnet run
+
+# View events in Kafka (optional)
+.\view-events.ps1
+
+# Stop Kafka when done
+.\stop-kafka.ps1
+```
+
 ## Project Structure
 
 ```
@@ -73,11 +96,24 @@ consumer-dotnet-kafka/
 
 ## PowerShell Scripts
 
+### Contract Testing Scripts
 | Script | Purpose | Common Usage |
 |--------|---------|--------------|
 | `publish-pact.ps1` | Run tests and publish contract to PactFlow | `.\publish-pact.ps1 -ConsumerVersion "1.0.0" -Branch "main"` |
 | `can-i-deploy.ps1` | Check if version is safe to deploy | `.\can-i-deploy.ps1 -ConsumerVersion "1.0.0"` |
 | `demo-workflow.ps1` | Interactive demo of contract testing workflow | `.\demo-workflow.ps1` |
+
+### Kafka Infrastructure Scripts
+| Script | Purpose | Common Usage |
+|--------|---------|--------------|
+| `start-kafka.ps1` | Start Kafka and Zookeeper containers | `.\start-kafka.ps1` |
+| `send-event.ps1` | Send events to Kafka topic | `.\send-event.ps1 -Mode quick` |
+| `view-events.ps1` | View events in Kafka topic | `.\view-events.ps1` |
+| `stop-kafka.ps1` | Stop Kafka infrastructure | `.\stop-kafka.ps1` |
+
+### Reference
+| Script | Purpose | Common Usage |
+|--------|---------|--------------|
 | `quick-reference.ps1` | Display quick reference guide | `.\quick-reference.ps1` |
 
 ### Script Details
