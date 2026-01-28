@@ -2,9 +2,11 @@
 using System;
 using System.Linq;
 
-namespace Products.Controllers;
+namespace Products.Controllers
+{
 
-public class ProductsController : Controller
+[ApiController]
+public class ProductsController : ControllerBase
 {
     private ProductRepository _repository;
 
@@ -58,4 +60,5 @@ public class ProductsController : Controller
         
         return new JsonResult(events);
     }
+}
 }
