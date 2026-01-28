@@ -120,38 +120,16 @@ Write-Host "`n🔍 Checking deployment safety..." -ForegroundColor Yellow
 if ($useDocker) {
     # Docker method
     if ($ConsumerVersion) {
-        docker run --rm pactfoundation/pact-cli:latest `
-            broker can-i-deploy `
-            --pacticipant=$Pacticipant `
-            --version=$ConsumerVersion `
-            --to-environment=$Environment `
-            --broker-base-url=$BrokerBaseUrl `
-            --broker-token=$BrokerToken
+        docker run --rm pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant=$Pacticipant --version=$ConsumerVersion --to-environment=$Environment --broker-base-url=$BrokerBaseUrl --broker-token=$BrokerToken
     } else {
-        docker run --rm pactfoundation/pact-cli:latest `
-            broker can-i-deploy `
-            --pacticipant=$Pacticipant `
-            --branch=$Branch `
-            --to-environment=$Environment `
-            --broker-base-url=$BrokerBaseUrl `
-            --broker-token=$BrokerToken
+        docker run --rm pactfoundation/pact-cli:latest broker can-i-deploy --pacticipant=$Pacticipant --branch=$Branch --to-environment=$Environment --broker-base-url=$BrokerBaseUrl --broker-token=$BrokerToken
     }
 } else {
     # pact-broker CLI
     if ($ConsumerVersion) {
-        pact-broker can-i-deploy `
-            --pacticipant=$Pacticipant `
-            --version=$ConsumerVersion `
-            --to-environment=$Environment `
-            --broker-base-url=$BrokerBaseUrl `
-            --broker-token=$BrokerToken
+        pact-broker can-i-deploy --pacticipant=$Pacticipant --version=$ConsumerVersion --to-environment=$Environment --broker-base-url=$BrokerBaseUrl --broker-token=$BrokerToken
     } else {
-        pact-broker can-i-deploy `
-            --pacticipant=$Pacticipant `
-            --branch=$Branch `
-            --to-environment=$Environment `
-            --broker-base-url=$BrokerBaseUrl `
-            --broker-token=$BrokerToken
+        pact-broker can-i-deploy --pacticipant=$Pacticipant --branch=$Branch --to-environment=$Environment --broker-base-url=$BrokerBaseUrl --broker-token=$BrokerToken
     }
 }
 
