@@ -43,7 +43,7 @@ Start-Sleep -Seconds 2
 
 # Step 2: Start consumer application
 Write-Host "`n[Step 2/8] Starting consumer application..." -ForegroundColor Yellow
-Write-Host "Starting on http://localhost:8080" -ForegroundColor Gray
+Write-Host "Starting on http://localhost:5001" -ForegroundColor Gray
 
 $consumerJob = Start-Job -ScriptBlock {
     Set-Location $using:PWD
@@ -56,7 +56,7 @@ Start-Sleep -Seconds 5
 
 # Check if it's running
 try {
-    $response = Invoke-WebRequest -Uri "http://localhost:8080/products" -ErrorAction SilentlyContinue -TimeoutSec 5
+    $response = Invoke-WebRequest -Uri "http://localhost:5001/products" -ErrorAction SilentlyContinue -TimeoutSec 5
     Write-Host "✅ Consumer application is running" -ForegroundColor Green
 } catch {
     Write-Host "⚠️  Consumer may not be fully started yet" -ForegroundColor Yellow
@@ -73,7 +73,7 @@ Start-Sleep -Seconds 2
 Write-Host "`n[Step 4/8] Verifying events were processed..." -ForegroundColor Yellow
 
 try {
-    $events = Invoke-RestMethod -Uri "http://localhost:8080/api/events" -Method Get
+    $events = Invoke-RestMethod -Uri "http://localhost:5001/api/events" -Method Get
     Write-Host "✅ Consumer processed $($events.Count) events:" -ForegroundColor Green
     $events | ForEach-Object {
         Write-Host "  - $($_.name) (ID: $($_.id), Type: $($_.type))" -ForegroundColor Gray
