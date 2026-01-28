@@ -83,27 +83,9 @@ Write-Host "`n✅ Kafka is running" -ForegroundColor Green
 
 # Sample events for quick mode
 $sampleEvents = @(
-    @{
-        id = "prod-001"
-        type = "Electronics"
-        name = "Laptop Pro"
-        version = "v1.0"
-        event = "CREATED"
-    },
-    @{
-        id = "prod-002"
-        type = "Furniture"
-        name = "Office Chair"
-        version = "v1.0"
-        event = "CREATED"
-    },
-    @{
-        id = "prod-003"
-        type = "Books"
-        name = "PowerShell Guide"
-        version = "v2.0"
-        event = "UPDATED"
-    }
+    '{"id":"prod-001","type":"Electronics","name":"Laptop Pro","version":"v1.0","event":"CREATED"}',
+    '{"id":"prod-002","type":"Furniture","name":"Office Chair","version":"v1.0","event":"CREATED"}',
+    '{"id":"prod-003","type":"Books","name":"PowerShell Guide","version":"v2.0","event":"UPDATED"}'
 )
 
 switch ($Mode) {
@@ -119,23 +101,19 @@ switch ($Mode) {
         Write-Host '  {"id":"test-3","type":"Gadget","name":"Gadget Y","version":"v1.0","event":"DELETED"}' -ForegroundColor Gray
         Write-Host ""
         
-        docker exec -it $ContainerName kafka-console-producer `
-            --bootstrap-server localhost:9092 `
-            --topic $Topic
+        docker exec -it $ContainerName kafka-console-producer --bootstrap-server localhost:9092 --topic $Topic
     }
     
     "quick" {
         Write-Host "`n🚀 Quick Send Mode - Sending test events..." -ForegroundColor White
         Write-Host "Topic: $Topic`n" -ForegroundColor Gray
         
-        foreach ($event in $sampleEvents) {
-            $json = $event | ConvertTo-Json -Compress
+        foreach ($json in $sampleEvents) {
             Write-Host "Sending: " -NoNewline -ForegroundColor Yellow
             Write-Host $json -ForegroundColor Gray
             
-            $json | docker exec -i $ContainerName kafka-console-producer `
-                --bootstrap-server localhost:9092 `
-                --topic $Topic
+            # Use echo to properly pipe JSON to docker
+            echo $json | docker exec -i $ContainerName kafka-console-producer --bootstrap-server localhost:9092 --topic $Topic
             
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "  ✅ Sent" -ForegroundColor Green
@@ -160,9 +138,7 @@ switch ($Mode) {
         Write-Host "Topic: $Topic" -ForegroundColor Gray
         Write-Host "Event: $Event`n" -ForegroundColor Gray
         
-        $Event | docker exec -i $ContainerName kafka-console-producer `
-            --bootstrap-server localhost:9092 `
-            --topic $Topic
+        echo $Event | docker exec -i $ContainerName kafka-console-producer --bootstrap-server localhost:9092 --topic $Topic
         
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✅ Event sent successfully!" -ForegroundColor Green

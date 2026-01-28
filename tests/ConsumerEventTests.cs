@@ -67,7 +67,7 @@ namespace Consumer.Tests
                           type = Match.Type("Product Range"),           // Any string is fine
                           name = Match.Type("Some Product"),            // Any string is fine
                           version = Match.Type("v1"),                   // Any string is fine
-                          @event = Match.Regex("UPDATED","^(CREATED|UPDATED|DELETED)$")  // Must be one of these three values
+                          @event = Match.Regex("ARCHIVED","^(CREATED|UPDATED|DELETED)$")  // Must be one of these three values
                       })
                       
                       // 7. Act & Assert - Verify our handler can process this message
