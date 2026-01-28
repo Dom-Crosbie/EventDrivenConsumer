@@ -71,6 +71,10 @@ The contract file will be generated in `tests/pacts/`
 cd src
 dotnet run
 
+# Access the API at http://localhost:8080
+# View processed events: http://localhost:8080/api/events
+# View products: http://localhost:8080/products
+
 # View events in Kafka (optional)
 .\view-events.ps1
 
