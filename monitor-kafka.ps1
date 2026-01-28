@@ -47,12 +47,7 @@ Write-Host "Press Ctrl+C to stop`n" -ForegroundColor Yellow
 Write-Host "-------------------------------------------" -ForegroundColor Cyan
 
 # Run console consumer with formatting
-docker exec -it $ContainerName kafka-console-consumer `
-    --bootstrap-server localhost:9092 `
-    --topic $Topic `
-    --from-beginning `
-    --property print.timestamp=true `
-    --property print.key=false
+docker exec -it $ContainerName kafka-console-consumer --bootstrap-server localhost:9092 --topic $Topic --from-beginning --property print.timestamp=true --property print.key=false
 
 Write-Host "`n-------------------------------------------" -ForegroundColor Cyan
 Write-Host "Monitoring stopped" -ForegroundColor Gray
